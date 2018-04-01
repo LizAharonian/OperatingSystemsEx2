@@ -7,8 +7,13 @@
 #include <wait.h>
 
 #define INPUT_SIZE 100
+#define JOBS_NUM 100
 #define INPUT_PARAMS 10
 int main() {
+    char **jobs[INPUT_SIZE];
+    int pids[JOBS_NUM];
+    int j =0;
+
     while (1) {
         printf("prompt>");
         int isBackground = 0;
@@ -18,32 +23,47 @@ int main() {
         //remove '/n'
         input[strlen(input) - 1] = '\0';
 
-        char **args[INPUT_SIZE];
-
-        const char s[2] = " ";
-        char *token;
-        //get the first token
-        int i = 0;
-        token = strtok(input, s);
-        strcpy(args[i], token);
-        //walk through other tokens
-        while (token != NULL) {
-            printf(" %s\n", args[i]);
-            i++;
-            token = strtok(NULL, s);
-            if (token != NULL && strcmp(token, "&") != 0) {
-                strcpy(args[i], token);
-            } else if (token != NULL && strcmp(token, "&") == 0) {
-                isBackground = 1;
+        if (strcmp(input, "jobs")==0) {
+            for (int i=0; i<j; i++) {
+                pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
+                if (returnPid ==0) {
+                    //todo: check number of spaces!!
+                    printf("%d         %s\n", pids[i],"hjjh");
+                }
             }
+
+        }else {
+
+            char **args[INPUT_SIZE];
+
+            const char s[2] = " ";
+            char *token;
+            //get the first token
+            int i = 0;
+            token = strtok(input, s);
+            strcpy(args[i], token);
+            //walk through other tokens
+            while (token != NULL) {
+                printf(" %s\n", args[i]);
+                i++;
+                token = strtok(NULL, s);
+                if (token != NULL && strcmp(token, "&") != 0) {
+                    strcpy(args[i], token);
+                } else if (token != NULL && strcmp(token, "&") == 0) {
+                    isBackground = 1;
+                }
+            }
+            args[i] = NULL;
+
+
+            //calling execv
+            int pid = callExecv(args, isBackground);
+            pids[j] = pid;
+           // token = strtok(input, s);
+            //strcpy(jobs[j], token);
+            j++;
+
         }
-        args[i] = NULL;
-
-
-        //calling execv
-        callExecv(args, isBackground);
-
-
     }
     return (0);
 
@@ -70,4 +90,5 @@ int callExecv(char **args, int isBackground) {
         }
         //printf("Father: Son proc completed,  id is %d \n", waited);
     }
+    return pid;
 }
