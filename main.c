@@ -9,6 +9,9 @@
 #define INPUT_SIZE 100
 #define JOBS_NUM 100
 #define INPUT_PARAMS 10
+#define HOME "HOME"
+#define SUCCESS 1
+#define FAIL -1
 int main() {
     char jobs[INPUT_SIZE][INPUT_SIZE];
     int pids[JOBS_NUM];
@@ -66,14 +69,18 @@ int main() {
             i++;
             args[i] = NULL;
 
+            if (strcmp(args[0],"cd")==0) {
+                cdImplementation(args);
+            } else {
+                //calling execv
+                int pid = callExecv(args, isBackground);
 
-            //calling execv
-            int pid = callExecv(args, isBackground);
-            pids[j] = pid;
-            // token = strtok(input, s);
-            strcpy(jobs[j], copyInput);
-            printf("%s", jobs[j]);
-            j++;
+                pids[j] = pid;
+                // token = strtok(input, s);
+                strcpy(jobs[j], copyInput);
+                printf("%s", jobs[j]);
+                j++;
+            }
 
         }
     }
@@ -87,9 +94,9 @@ int callExecv(char **args, int isBackground) {
     pid = fork();
     if (pid == 0) {  // son
         ret_code = execvp(args[0], &args[0]);
-        if (ret_code == -1) {
+        if (ret_code == FAIL) {
             perror("exec failed ");
-            exit(-1);
+            exit(FAIL);
         }
     } else {   //father prints pid of son
         printf("%d \n", pid);
@@ -99,4 +106,17 @@ int callExecv(char **args, int isBackground) {
         //printf("Father: Son proc completed,  id is %d \n", waited);
     }
     return pid;
+}
+int cdImplementation(char *args[]){
+    if (args[1] ==NULL){
+        chdir(getenv(HOME));
+        return SUCCESS;
+    } else {
+        if (chdir(args[1]) == FAIL) {
+            int y = strlen(args[1]);
+            //todo:handle errors
+            perror("hh");
+            return FAIL;
+        }
+    }
 }
