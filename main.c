@@ -10,7 +10,7 @@
 #define JOBS_NUM 100
 #define INPUT_PARAMS 10
 int main() {
-    char **jobs[INPUT_SIZE];
+    char jobs[INPUT_SIZE][INPUT_SIZE];
     int pids[JOBS_NUM];
     int j =0;
 
@@ -19,7 +19,8 @@ int main() {
         int isBackground = 0;
         char input[INPUT_SIZE];
         fgets(input, INPUT_SIZE, stdin);
-
+        char copyInput[INPUT_SIZE];
+        strcpy(copyInput,input);
         //remove '/n'
         input[strlen(input) - 1] = '\0';
 
@@ -34,21 +35,21 @@ int main() {
 
         }else {
 
-            char **args[INPUT_SIZE];
+            char *args[INPUT_SIZE];
 
             const char s[2] = " ";
             char *token;
             //get the first token
             int i = 0;
             token = strtok(input, s);
-            strcpy(args[i], token);
+            strcpy(&args[i], token);
             //walk through other tokens
             while (token != NULL) {
-                printf(" %s\n", args[i]);
+                printf(" %s\n", &args[i]);
                 i++;
                 token = strtok(NULL, s);
                 if (token != NULL && strcmp(token, "&") != 0) {
-                    strcpy(args[i], token);
+                    strcpy(&args[i], token);
                 } else if (token != NULL && strcmp(token, "&") == 0) {
                     isBackground = 1;
                 }
@@ -58,9 +59,13 @@ int main() {
 
             //calling execv
             int pid = callExecv(args, isBackground);
+            if (pid==0) {
+                exit(1);
+            }
             pids[j] = pid;
-           // token = strtok(input, s);
-            //strcpy(jobs[j], token);
+          // token = strtok(input, s);
+            strcpy(jobs[j], copyInput);
+            printf("%s\n",jobs[j]);
             j++;
 
         }
