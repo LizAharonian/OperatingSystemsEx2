@@ -11,10 +11,14 @@
 int main() {
     // while (1) {
     printf("prompt>");
-
-    char input[INPUT_SIZE];
-    fgets(input, INPUT_SIZE, stdin);
-    char args[INPUT_SIZE][INPUT_SIZE];
+    int isBackground=0;
+    char input[INPUT_SIZE]="ls -l&";
+    if (input[strlen(input)-1]=='&'){
+        isBackground =1;
+        input[strlen(input)-1] = '\0';
+    }
+    //fgets(input, INPUT_SIZE, stdin);
+    char **args[INPUT_SIZE];
 
     const char s[2] = " ";
     char *token;
@@ -31,14 +35,26 @@ int main() {
             strcpy(args[i], token);
         }
     }
+    args[i]=NULL;
+    //char* h[10] ={"cat","/home/liz/Desktop/OS/Ex2/liz",NULL};
 
     //calling execv
-    /*int stat,waited,ret_code;
+    callExecv(args,isBackground);
+
+
+    return (0);
+
+
+    // }
+}
+
+int callExecv(char **args, int isBackground) {
+    int stat,waited,ret_code;
     pid_t pid;
     pid = fork();
     if (pid == 0)
-    {  // Son
-        ret_code = execvp(args[0],args[1]);
+    {  // son
+        ret_code = execv("/bin/ls",args);
         if (ret_code == -1)
         {
             perror("exec failed ");
@@ -46,15 +62,11 @@ int main() {
         }
     }
     else
-    {  *//* Father *//*
-        printf("Father: after fork, son proc id is %d \n",pid);
-        waited = wait(&stat);   *//* stat can tell what happened *//*
-        printf("Father: Son proc completed,  id is %d \n", waited);
-    }*/
-
-
-    return (0);
-
-
-    // }
+    {   //father prints pid of son
+        printf("%d \n",pid);
+        if (!isBackground) {
+            wait(&stat);   // stat can tell what happened
+        }
+        //printf("Father: Son proc completed,  id is %d \n", waited);
+    }
 }
