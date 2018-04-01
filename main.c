@@ -9,43 +9,44 @@
 #define INPUT_SIZE 100
 #define INPUT_PARAMS 10
 int main() {
-    // while (1) {
-    printf("prompt>");
-    int isBackground=0;
-    char input[INPUT_SIZE]="ls -l&";
-    if (input[strlen(input)-1]=='&'){
-        isBackground =1;
-        input[strlen(input)-1] = '\0';
-    }
-    //fgets(input, INPUT_SIZE, stdin);
-    char **args[INPUT_SIZE];
+    while (1) {
+        printf("prompt>");
+        int isBackground = 0;
+        char input[INPUT_SIZE];
+        fgets(input, INPUT_SIZE, stdin);
 
-    const char s[2] = " ";
-    char *token;
-    //get the first token
-    int i = 0;
-    token = strtok(input, s);
-    strcpy(args[i], token);
-    //walk through other tokens
-    while (token != NULL) {
-        printf(" %s\n", args[i]);
-        i++;
-        token= strtok(NULL, s);
-        if (token !=NULL) {
-            strcpy(args[i], token);
+        //remove '/n'
+        input[strlen(input) - 1] = '\0';
+
+        char **args[INPUT_SIZE];
+
+        const char s[2] = " ";
+        char *token;
+        //get the first token
+        int i = 0;
+        token = strtok(input, s);
+        strcpy(args[i], token);
+        //walk through other tokens
+        while (token != NULL) {
+            printf(" %s\n", args[i]);
+            i++;
+            token = strtok(NULL, s);
+            if (token != NULL && strcmp(token, "&") != 0) {
+                strcpy(args[i], token);
+            } else if (token != NULL && strcmp(token, "&") == 0) {
+                isBackground = 1;
+            }
         }
+        args[i] = NULL;
+
+
+        //calling execv
+        callExecv(args, isBackground);
+
+
     }
-    args[i]=NULL;
-    //char* h[10] ={"cat","/home/liz/Desktop/OS/Ex2/liz",NULL};
-
-    //calling execv
-    callExecv(args,isBackground);
-
-
     return (0);
 
-
-    // }
 }
 
 int callExecv(char **args, int isBackground) {
@@ -54,7 +55,7 @@ int callExecv(char **args, int isBackground) {
     pid = fork();
     if (pid == 0)
     {  // son
-        ret_code = execv("/bin/ls",args);
+        ret_code = execvp(args[0],&args[0]);
         if (ret_code == -1)
         {
             perror("exec failed ");
