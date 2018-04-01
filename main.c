@@ -20,17 +20,25 @@ int main() {
         char input[INPUT_SIZE];
         char copyInput[INPUT_SIZE];
         fgets(input, INPUT_SIZE, stdin);
-        strcpy(copyInput,input);
 
         //remove '/n'
         input[strlen(input) - 1] = '\0';
+        strcpy(copyInput,input);
 
         if (strcmp(input, "jobs")==0) {
             for (int i=0; i<j; i++) {
                 pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
                 if (returnPid ==0) {
                     //todo: check number of spaces!!
-                    printf("%d         %s\n", pids[i],jobs[i]);
+
+                    printf("%d         ", pids[i]);
+                    int len = strlen(jobs[i]);
+                    for (int k=0; k<len;k++){
+                        if (!((k==len-1)&&jobs[i][k]=='&')){
+                            printf("%c", jobs[i][k]);
+
+                        }
+                    }
                 }
             }
 
@@ -47,7 +55,6 @@ int main() {
             //walk through other tokens
             while (token != NULL) {
                 printf(" %s\n", args[i]);
-
                 token = strtok(NULL, s);
                 if (token != NULL && strcmp(token, "&") != 0) {
                     i++;
