@@ -81,10 +81,8 @@ int cdImplementation(char *args[]){
         return SUCCESS;
     } else {
         if (chdir(args[1]) == FAIL) {
-            int y = strlen(args[1]);
-            //todo:handle errors
-            //perror("hh");
-            fprintf(stderr, "cannot set cd\n");
+            fprintf(stderr, "cannot set cd");
+            printf("\n");
             return FAIL;
         }
     }
