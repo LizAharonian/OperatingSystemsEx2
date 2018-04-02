@@ -79,6 +79,8 @@ int callExecv(char **args, int isBackground) {
     if (pid == 0) {  // son
         retCode = execvp(args[0], &args[0]);
         if (retCode == FAIL) {
+            fprintf(stderr, "cannot operate command");
+            printf("\n");
             exit(FAIL);
         }
     } else {   //father prints pid of son
