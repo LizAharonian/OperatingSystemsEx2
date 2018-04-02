@@ -14,6 +14,12 @@
 #define TRUE 1
 #define FALSE 0
 
+//declarations
+int callExecv(char **args, int isBackground);
+int cdImplementation(char *args[]);
+void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j);
+void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground);
+
 /**
  * main function.
  * runs the program
@@ -106,13 +112,15 @@ int cdImplementation(char *args[]){
  */
 void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j){
     int flag =FALSE;
-    for (int i=0; i<j; i++) {
+    int i;
+    for (i=0; i<j; i++) {
         pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
         if (returnPid ==0) {
             flag=TRUE;
             printf("%d         ", pids[i]);
             int len = strlen(jobs[i]);
-            for (int k=0; k<len;k++){
+            int k;
+            for (k=0; k<len;k++){
                 if (!((k==len-1)&&jobs[i][k]=='&')){
                     printf("%c", jobs[i][k]);
 
