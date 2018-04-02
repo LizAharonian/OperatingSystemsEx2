@@ -14,7 +14,7 @@
 #define TRUE 1
 #define FALSE 0
 
-//declarations
+//declarationsm
 int callExecv(char **args, int isBackground);
 int cdImplementation(char *args[]);
 void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j);
@@ -117,7 +117,7 @@ void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j){
         pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
         if (returnPid ==0) {
             flag=TRUE;
-            printf("%d         ", pids[i]);
+            printf("%d ", pids[i]);
             int len = strlen(jobs[i]);
             int k;
             for (k=0; k<len;k++){
