@@ -1,25 +1,25 @@
 #include <stdio.h>
 #include <memory.h>
-#include <malloc.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <wait.h>
 
-#define INPUT_SIZE 100
-#define JOBS_NUM 100
-#define INPUT_PARAMS 10
+#define INPUT_SIZE 1000
+#define JOBS_NUM 1000
 #define HOME "HOME"
 #define SUCCESS 1
 #define FAIL -1
+#define TRUE 1
+#define FALSE 0
 int main() {
     char jobs[INPUT_SIZE][INPUT_SIZE];
     int pids[JOBS_NUM];
     int j =0;
 
-    while (1) {
+    while (TRUE) {
         printf("prompt>");
-        int isBackground = 0;
+        int isBackground = FALSE;
         char input[INPUT_SIZE];
         char copyInput[INPUT_SIZE];
         //scan input from user
@@ -107,11 +107,11 @@ void updateJobes(int pids[], char *jobs[], int j) {
 }
 
 void printJobs(int pids[], char jobs[INPUT_SIZE][INPUT_SIZE], int j){
-    int flag =0;
+    int flag =FALSE;
     for (int i=0; i<j; i++) {
         pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
         if (returnPid ==0) {
-            flag=1;
+            flag=TRUE;
             //todo: check number of spaces!!
 
             printf("%d         ", pids[i]);
@@ -142,7 +142,7 @@ void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground)
             i++;
             args[i]= token;
         } else if (token != NULL && strcmp(token, "&") == 0) {
-            *isBackground = 1;
+            *isBackground = TRUE;
         }
     }
     i++;
