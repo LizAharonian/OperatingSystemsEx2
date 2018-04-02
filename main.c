@@ -13,6 +13,7 @@
 #define FAIL -1
 #define TRUE 1
 #define FALSE 0
+#define ERROR 255
 
 //declarationsm
 int callExecv(char **args, int isBackground);
@@ -72,11 +73,14 @@ int main() {
  * @return pid of son
  */
 int callExecv(char **args, int isBackground) {
-    int stat;
+    int stat, retCode;
     pid_t pid;
     pid = fork();
     if (pid == 0) {  // son
-        execvp(args[0], &args[0]);
+        retCode = execvp(args[0], &args[0]);
+        if (retCode == FAIL) {
+            exit(FAIL);
+        }
     } else {   //father prints pid of son
         printf("%d \n", pid);
         if (!isBackground) {
