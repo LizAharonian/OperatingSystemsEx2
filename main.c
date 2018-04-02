@@ -34,26 +34,7 @@ int main() {
         } else {
 
             char *args[INPUT_SIZE];
-
-            const char s[2] = " ";
-            char *token;
-            //get the first token
-            int i = 0;
-            token = strtok(input, s);
-            args[i]= token;
-            //walk through other tokens
-            while (token != NULL) {
-                printf(" %s\n", args[i]);
-                token = strtok(NULL, s);
-                if (token != NULL && strcmp(token, "&") != 0) {
-                    i++;
-                    args[i]= token;
-                } else if (token != NULL && strcmp(token, "&") == 0) {
-                    isBackground = 1;
-                }
-            }
-            i++;
-            args[i] = NULL;
+            makeArgs(args, input, &isBackground);
 
             if (strcmp(args[0],"cd")==0) {
                 cdImplementation(args);
@@ -142,4 +123,27 @@ void printJobs(int pids[], char jobs[INPUT_SIZE][INPUT_SIZE], int j){
             }
         }
     }
+}
+void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground){
+    const char s[2] = " ";
+    char *token;
+    //get the first token
+    int i = 0;
+    token = strtok(input, s);
+    args[i]= token;
+    //walk through other tokens
+    while (token != NULL) {
+        printf(" %s\n", args[i]);
+        token = strtok(NULL, s);
+        if (token != NULL && strcmp(token, "&") != 0) {
+            i++;
+            args[i]= token;
+        } else if (token != NULL && strcmp(token, "&") == 0) {
+            *isBackground = 1;
+        }
+    }
+    i++;
+    args[i] = NULL;
+
+
 }
