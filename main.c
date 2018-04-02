@@ -45,7 +45,6 @@ int main() {
                 pids[j] = pid;
                 // token = strtok(input, s);
                 strcpy(jobs[j], copyInput);
-                printf("%s", jobs[j]);
                 j++;
             }
 
@@ -60,17 +59,19 @@ int callExecv(char **args, int isBackground) {
     pid_t pid;
     pid = fork();
     if (pid == 0) {  // son
-        ret_code = execvp(args[0], &args[0]);
-        if (ret_code == FAIL) {
-            perror("exec failed ");
-            exit(FAIL);
-        }
+        execvp(args[0], &args[0]);
+
+
     } else {   //father prints pid of son
         printf("%d \n", pid);
         if (!isBackground) {
             wait(&stat);   // stat can tell what happened
+            int status = WEXITSTATUS(stat);
+            if (status == 1){
+                //fprintf(stderr, "exec failed\n");
+
+            }
         }
-        //printf("Father: Son proc completed,  id is %d \n", waited);
     }
     return pid;
 }
@@ -82,7 +83,8 @@ int cdImplementation(char *args[]){
         if (chdir(args[1]) == FAIL) {
             int y = strlen(args[1]);
             //todo:handle errors
-            perror("hh");
+            //perror("hh");
+            fprintf(stderr, "cannot set cd\n");
             return FAIL;
         }
     }
@@ -107,10 +109,11 @@ void updateJobes(int pids[], char *jobs[], int j) {
 }
 
 void printJobs(int pids[], char jobs[INPUT_SIZE][INPUT_SIZE], int j){
-
+    int flag =0;
     for (int i=0; i<j; i++) {
         pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
         if (returnPid ==0) {
+            flag=1;
             //todo: check number of spaces!!
 
             printf("%d         ", pids[i]);
@@ -123,6 +126,9 @@ void printJobs(int pids[], char jobs[INPUT_SIZE][INPUT_SIZE], int j){
             }
         }
     }
+    if (flag) {
+        printf("\n");
+    }
 }
 void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground){
     const char s[2] = " ";
@@ -133,7 +139,6 @@ void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground)
     args[i]= token;
     //walk through other tokens
     while (token != NULL) {
-        printf(" %s\n", args[i]);
         token = strtok(NULL, s);
         if (token != NULL && strcmp(token, "&") != 0) {
             i++;
