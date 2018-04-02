@@ -22,30 +22,16 @@ int main() {
         int isBackground = 0;
         char input[INPUT_SIZE];
         char copyInput[INPUT_SIZE];
+        //scan input from user
         fgets(input, INPUT_SIZE, stdin);
-
         //remove '/n'
         input[strlen(input) - 1] = '\0';
         strcpy(copyInput,input);
 
         if (strcmp(input, "jobs")==0) {
-            for (int i=0; i<j; i++) {
-                pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
-                if (returnPid ==0) {
-                    //todo: check number of spaces!!
+            printJobs(pids,jobs,j);
 
-                    printf("%d         ", pids[i]);
-                    int len = strlen(jobs[i]);
-                    for (int k=0; k<len;k++){
-                        if (!((k==len-1)&&jobs[i][k]=='&')){
-                            printf("%c", jobs[i][k]);
-
-                        }
-                    }
-                }
-            }
-
-        }else {
+        } else {
 
             char *args[INPUT_SIZE];
 
@@ -117,6 +103,43 @@ int cdImplementation(char *args[]){
             //todo:handle errors
             perror("hh");
             return FAIL;
+        }
+    }
+}
+
+void updateJobes(int pids[], char *jobs[], int j) {
+    /*for (int i=0; i<j; i++) {
+        pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
+        if (returnPid ==0) {
+            //todo: check number of spaces!!
+
+            printf("%d         ", pids[i]);
+            int len = strlen(jobs[i]);
+            for (int k=0; k<len;k++){
+                if (!((k==len-1)&&jobs[i][k]=='&')){
+                    printf("%c", jobs[i][k]);
+
+                }
+            }
+        }
+    }*/
+}
+
+void printJobs(int pids[], char jobs[INPUT_SIZE][INPUT_SIZE], int j){
+
+    for (int i=0; i<j; i++) {
+        pid_t returnPid = waitpid(pids[i], NULL, WNOHANG);
+        if (returnPid ==0) {
+            //todo: check number of spaces!!
+
+            printf("%d         ", pids[i]);
+            int len = strlen(jobs[i]);
+            for (int k=0; k<len;k++){
+                if (!((k==len-1)&&jobs[i][k]=='&')){
+                    printf("%c", jobs[i][k]);
+
+                }
+            }
         }
     }
 }
