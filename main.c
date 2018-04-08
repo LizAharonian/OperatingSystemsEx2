@@ -46,11 +46,15 @@ int main() {
         //operate the action
         if (strcmp(input, "jobs")==0) {
             printJobs(pids,jobs,j);
+        } else if (strcmp(input, "exit")==0) {
+            printf("%d \n", getpid());
+            exit(0);
         } else {
             //allocate memory for args array
             char *args[INPUT_SIZE];
             makeArgs(args, input, &isBackground);
             if (strcmp(args[0],"cd")==0) {
+                printf("%d \n", getpid());
                 cdImplementation(args);
             } else {
                 //calling execv
