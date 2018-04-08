@@ -13,9 +13,8 @@
 #define FAIL -1
 #define TRUE 1
 #define FALSE 0
-#define ERROR 255
 
-//declarationsm
+//declarations
 int callExecv(char **args, int isBackground);
 int cdImplementation(char *args[]);
 void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j);
@@ -79,7 +78,7 @@ int callExecv(char **args, int isBackground) {
     if (pid == 0) {  // son
         retCode = execvp(args[0], &args[0]);
         if (retCode == FAIL) {
-            fprintf(stderr, "cannot operate command");
+            fprintf(stderr, "Error in system call");
             printf("\n");
             exit(FAIL);
         }
@@ -103,7 +102,7 @@ int cdImplementation(char *args[]){
         return SUCCESS;
     } else {
         if (chdir(args[1]) == FAIL) {
-            fprintf(stderr, "cannot set cd");
+            fprintf(stderr, "Error in system call");
             printf("\n");
             return FAIL;
         }
