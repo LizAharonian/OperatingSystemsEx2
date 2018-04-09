@@ -13,10 +13,11 @@
 #define FAIL -1
 #define TRUE 1
 #define FALSE 0
+#define ERROR "Error in system call"
 
 //declarations
 int callExecv(char **args, int isBackground);
-int cdImplementation(char *args[]);
+int cdImplementation(char *args[],char lastCdDir[INPUT_SIZE]);
 void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j);
 void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground);
 
@@ -30,6 +31,7 @@ int main() {
     char jobs[JOBS_NUM][INPUT_SIZE];
     int pids[JOBS_NUM];
     int j =0;
+    char lastCdDir[INPUT_SIZE] ="";
     //while loop runs the shell
     while (TRUE) {
         printf("prompt>");
@@ -58,7 +60,7 @@ int main() {
             }
             if (strcmp(args[0],"cd")==0) {
                 printf("%d \n", getpid());
-                cdImplementation(args);
+                cdImplementation(args,lastCdDir);
             } else {
                 //calling execv
                 int pid = callExecv(args, isBackground);
@@ -85,7 +87,7 @@ int callExecv(char **args, int isBackground) {
     if (pid == 0) {  // son
         retCode = execvp(args[0], &args[0]);
         if (retCode == FAIL) {
-            fprintf(stderr, "Error in system call");
+            fprintf(stderr, ERROR);
             printf("\n");
             exit(FAIL);
         }
@@ -103,16 +105,54 @@ int callExecv(char **args, int isBackground) {
  * @param args - input arguments
  * @return success or failure
  */
-int cdImplementation(char *args[]){
+int cdImplementation(char *args[],char lastCdDir[INPUT_SIZE]){
     if (args[1] ==NULL){
-        chdir(getenv(HOME));
-        return SUCCESS;
+
+        return changeCd2Home(lastCdDir);
+
     } else {
-        if (chdir(args[1]) == FAIL) {
-            fprintf(stderr, "Error in system call");
-            printf("\n");
-            return FAIL;
+        int i =0;
+        while (args[i]!=NULL) {
+            i++;
         }
+        if (i==2 && strcmp(args[1],"-")==0){
+            return changeSpecipicCdDir(lastCdDir,lastCdDir,TRUE);
+
+        } else if (i==2&& strcmp(args[1],"~")==0) {
+            return changeCd2Home(lastCdDir);
+        } else {
+            return changeSpecipicCdDir(args[1],lastCdDir,FALSE);
+        }
+    }
+}
+
+int changeSpecipicCdDir(char *dir,char lastCdDir[INPUT_SIZE], int isCdMinus) {
+    char cwd[INPUT_SIZE];
+    getcwd(cwd,sizeof(cwd));
+    if (chdir(dir) == FAIL) {
+        fprintf(stderr, ERROR);
+        printf("\n");
+        return FAIL;
+    } else {
+        if(isCdMinus==TRUE){
+            printf("%s\n", dir);
+        }
+        strcpy(lastCdDir,cwd);
+
+        return SUCCESS;
+    }
+}
+
+int changeCd2Home(char lastCdDir[INPUT_SIZE]){
+    char cwd[INPUT_SIZE];
+    getcwd(cwd,sizeof(lastCdDir));
+    if(chdir(getenv(HOME))==FAIL) {
+        fprintf(stderr, ERROR);
+        printf("\n");
+        return FAIL;
+    } else {
+        strcpy(lastCdDir,cwd);
+        return SUCCESS;
     }
 }
 
