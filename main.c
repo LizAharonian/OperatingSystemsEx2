@@ -53,6 +53,9 @@ int main() {
             //allocate memory for args array
             char *args[INPUT_SIZE];
             makeArgs(args, input, &isBackground);
+            if (args[0]==NULL){
+                continue;
+            }
             if (strcmp(args[0],"cd")==0) {
                 printf("%d \n", getpid());
                 cdImplementation(args);
