@@ -20,6 +20,8 @@ int callExecv(char **args, int isBackground);
 int cdImplementation(char *args[],char lastCdDir[INPUT_SIZE]);
 void printJobs(int pids[], char jobs[JOBS_NUM][INPUT_SIZE], int j);
 void makeArgs(char *args[INPUT_SIZE], char input[INPUT_SIZE], int* isBackground);
+int changeSpecipicCdDir(char *dir,char lastCdDir[INPUT_SIZE], int isCdMinus);
+int changeCd2Home(char lastCdDir[INPUT_SIZE]);
 
 /**
  * main function.
@@ -125,10 +127,17 @@ int cdImplementation(char *args[],char lastCdDir[INPUT_SIZE]){
         }
     }
 }
+/**
+ * changeSpecipicCdDir function.
+ * @param dir - cd dir
+ * @param lastCdDir - prev cd dir
+ * @param isCdMinus - indicates if command is "cd -"
+ * @return FAIL or SUCCESS
+ */
 
 int changeSpecipicCdDir(char *dir,char lastCdDir[INPUT_SIZE], int isCdMinus) {
     char cwd[INPUT_SIZE];
-    getcwd(cwd,sizeof(cwd));
+    getcwd(cwd,INPUT_SIZE);
     if (chdir(dir) == FAIL) {
         fprintf(stderr, ERROR);
         printf("\n");
@@ -143,9 +152,14 @@ int changeSpecipicCdDir(char *dir,char lastCdDir[INPUT_SIZE], int isCdMinus) {
     }
 }
 
+/**
+ * changeCd2Home function.
+ * @param lastCdDir - prev cd dir
+ * @return FAIL or SUCCESS
+ */
 int changeCd2Home(char lastCdDir[INPUT_SIZE]){
     char cwd[INPUT_SIZE];
-    getcwd(cwd,sizeof(lastCdDir));
+    getcwd(cwd,INPUT_SIZE);
     if(chdir(getenv(HOME))==FAIL) {
         fprintf(stderr, ERROR);
         printf("\n");
