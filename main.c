@@ -96,7 +96,7 @@ int callExecv(char **args, int isBackground) {
     } else {   //father prints pid of son
         printf("%d \n", pid);
         if (!isBackground) {
-            wait(&stat);   // stat can tell what happened
+            waitpid(pid,NULL,0);   // stat can tell what happened
         }
     }
     return pid;
